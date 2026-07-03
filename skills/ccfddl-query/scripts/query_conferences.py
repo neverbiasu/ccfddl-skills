@@ -96,7 +96,7 @@ def load_source(
     if refresh_cache or not cache_path.exists():
         try:
             request = urllib.request.Request(
-                url, headers={"User-Agent": "ccfddl-skills/0.1"}
+                url, headers={"User-Agent": "ccfddl-skills/1.0"}
             )
             with urllib.request.urlopen(request, timeout=20) as response:
                 text = response.read().decode("utf-8")

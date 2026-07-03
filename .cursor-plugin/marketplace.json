@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Agent skills for querying ccfddl conference deadline data.",
-    "version": "0.1.0"
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "ccfddl-skills",
       "source": ".",
       "description": "Query conference deadlines, ranks, categories, and submission windows from ccfddl data.",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "author": {
         "name": "ccfddl-skills contributors"
       },

@@ -10,6 +10,10 @@ The main product surface is the skill under `skills/ccfddl-query/`. The Python s
 .codex-plugin/
 .claude-plugin/
 .cursor-plugin/
+.agents/plugins/
+.cursor/
+.trae/
+antigravity/
 skills/
   ccfddl-query/
     SKILL.md
@@ -20,6 +24,7 @@ skills/
 scripts/
 tests/
 rules/
+package.json
 ```
 
 Usage examples for common research submission scenarios are in `examples/`.
@@ -45,7 +50,7 @@ Compatibility/project-level entries are also present for `.agents/plugins`, `.cu
 ## Checks
 
 ```bash
-python -m pip install PyYAML pytest ruff
+python -m pip install ".[dev]"
 scripts/check.sh
 ```
 
