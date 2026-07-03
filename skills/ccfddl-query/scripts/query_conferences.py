@@ -15,8 +15,12 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 try:
     import yaml
-except ImportError as exc:  # pragma: no cover - exercised only without dependency installed
-    raise SystemExit("PyYAML is required. Install with `python -m pip install PyYAML`.") from exc
+except (
+    ImportError
+) as exc:  # pragma: no cover - exercised only without dependency installed
+    raise SystemExit(
+        "PyYAML is required. Install with `python -m pip install PyYAML`."
+    ) from exc
 
 
 DEFAULT_URL = "https://ccfddl.github.io/conference/allconf.yml"
@@ -25,9 +29,18 @@ DBLP_PREFIX = "https://dblp.org/db/conf/"
 
 DOMAIN_MAP: Dict[str, Dict[str, Any]] = {
     "cv": {"categories": ["AI", "CG", "MX"], "domain_name": "Computer Vision"},
-    "computer-vision": {"categories": ["AI", "CG", "MX"], "domain_name": "Computer Vision"},
-    "image-editing": {"categories": ["AI", "CG", "MX"], "domain_name": "Image Editing"},
-    "relighting": {"categories": ["AI", "CG", "MX"], "domain_name": "Relighting"},
+    "computer-vision": {
+        "categories": ["AI", "CG", "MX"],
+        "domain_name": "Computer Vision",
+    },
+    "image-editing": {
+        "categories": ["AI", "CG", "MX"],
+        "domain_name": "Image Editing",
+    },
+    "relighting": {
+        "categories": ["AI", "CG", "MX"],
+        "domain_name": "Relighting",
+    },
 }
 
 
@@ -76,11 +89,15 @@ def load_source(
     refresh_cache: bool,
 ) -> SourceData:
     if data_path:
-        return SourceData(data_path.read_text(encoding="utf-8"), f"file:{data_path}")
+        return SourceData(
+            data_path.read_text(encoding="utf-8"), f"file:{data_path}"
+        )
 
     if refresh_cache or not cache_path.exists():
         try:
-            request = urllib.request.Request(url, headers={"User-Agent": "ccfddl-skills/0.1"})
+            request = urllib.request.Request(
+                url, headers={"User-Agent": "ccfddl-skills/0.1"}
+            )
             with urllib.request.urlopen(request, timeout=20) as response:
                 text = response.read().decode("utf-8")
             cache_path.parent.mkdir(parents=True, exist_ok=True)
@@ -94,9 +111,13 @@ def load_source(
                     cache_used=True,
                     notes=[f"online fetch failed: {exc}"],
                 )
-            raise SystemExit(f"Could not fetch {url} and no cache exists: {exc}") from exc
+            raise SystemExit(
+                f"Could not fetch {url} and no cache exists: {exc}"
+            ) from exc
 
-    return SourceData(cache_path.read_text(encoding="utf-8"), f"cache:{cache_path}", True)
+    return SourceData(
+        cache_path.read_text(encoding="utf-8"), f"cache:{cache_path}", True
+    )
 
 
 def parse_conferences(text: str) -> List[Dict[str, Any]]:
@@ -127,7 +148,7 @@ def nth_sunday(year: int, month: int, n: int) -> date:
 
 
 def is_us_dst(day: date) -> bool:
-    """Match ccf-deadlines TUI PT handling: second Mar Sunday to first Nov Sunday."""
+    """Match ccf-deadlines TUI PT handling."""
     return nth_sunday(day.year, 3, 2) <= day < nth_sunday(day.year, 11, 1)
 
 
@@ -173,14 +194,18 @@ def normalize_deadline(
         status = "open" if delta.total_seconds() >= 0 else "closed"
 
     abstract_dt = parse_deadline(item.get("abstract_deadline"))
-    abstract_with_tz = abstract_dt.replace(tzinfo=offset) if abstract_dt else None
+    abstract_with_tz = (
+        abstract_dt.replace(tzinfo=offset) if abstract_dt else None
+    )
 
     return {
         "type": "paper",
         "abstract_deadline": item.get("abstract_deadline"),
-        "abstract_local_deadline": abstract_with_tz.astimezone().isoformat()
-        if abstract_with_tz
-        else None,
+        "abstract_local_deadline": (
+            abstract_with_tz.astimezone().isoformat()
+            if abstract_with_tz
+            else None
+        ),
         "deadline": raw_deadline,
         "local_deadline": local_dt.isoformat() if local_dt else None,
         "timezone": tz_label,
@@ -190,7 +215,9 @@ def normalize_deadline(
     }
 
 
-def instance_status(deadlines: List[Dict[str, Any]]) -> Tuple[str, Optional[int]]:
+def instance_status(
+    deadlines: List[Dict[str, Any]],
+) -> Tuple[str, Optional[int]]:
     if not deadlines:
         return "tbd", None
     open_days = [
@@ -228,7 +255,11 @@ def flatten_conferences(
             result = {
                 "id": instance.get("id"),
                 "conference": conf_title,
-                "title": f"{conf_title} {year}" if conf_title and year else conf_title,
+                "title": (
+                    f"{conf_title} {year}"
+                    if conf_title and year
+                    else conf_title
+                ),
                 "year": year,
                 "description": conference.get("description"),
                 "category": conference.get("sub"),
@@ -253,7 +284,7 @@ def flatten_conferences(
 
 
 def load_accept_rates_map(path: Path) -> Dict[str, List[Dict[str, Any]]]:
-    """Load accept_rates YAML and return dict keyed by lowercased conference title."""
+    """Load accept_rates YAML keyed by lowercased conference title."""
     text = path.read_text(encoding="utf-8")
     data = yaml.safe_load(text)
     if not isinstance(data, list):
@@ -307,23 +338,50 @@ def fuzzy_match(result: Dict[str, Any], query: str) -> bool:
     ]
     if any(needle in item for item in haystacks):
         return True
-    return any(SequenceMatcher(None, needle, item).ratio() >= 0.72 for item in haystacks)
+    return any(
+        SequenceMatcher(None, needle, item).ratio() >= 0.72
+        for item in haystacks
+    )
 
 
-def apply_filters(results: List[Dict[str, Any]], filters: QueryFilters) -> List[Dict[str, Any]]:
+def apply_filters(
+    results: List[Dict[str, Any]], filters: QueryFilters
+) -> List[Dict[str, Any]]:
     filtered = list(results)
     if filters.query:
-        filtered = [item for item in filtered if fuzzy_match(item, filters.query)]
+        filtered = [
+            item for item in filtered if fuzzy_match(item, filters.query)
+        ]
     if filters.categories:
-        filtered = [item for item in filtered if item.get("category") in filters.categories]
+        filtered = [
+            item
+            for item in filtered
+            if item.get("category") in filters.categories
+        ]
     if filters.ccf_ranks:
-        filtered = [item for item in filtered if item["rank"].get("ccf") in filters.ccf_ranks]
+        filtered = [
+            item
+            for item in filtered
+            if item["rank"].get("ccf") in filters.ccf_ranks
+        ]
     if filters.core_ranks:
-        filtered = [item for item in filtered if item["rank"].get("core") in filters.core_ranks]
+        filtered = [
+            item
+            for item in filtered
+            if item["rank"].get("core") in filters.core_ranks
+        ]
     if filters.thcpl_ranks:
-        filtered = [item for item in filtered if item["rank"].get("thcpl") in filters.thcpl_ranks]
+        filtered = [
+            item
+            for item in filtered
+            if item["rank"].get("thcpl") in filters.thcpl_ranks
+        ]
     if filters.status:
-        filtered = [item for item in filtered if status_matches(item["status"], filters.status)]
+        filtered = [
+            item
+            for item in filtered
+            if status_matches(item["status"], filters.status)
+        ]
     if filters.within_days is not None:
         filtered = [
             item
@@ -339,7 +397,11 @@ def apply_filters(results: List[Dict[str, Any]], filters: QueryFilters) -> List[
 
 def sort_key(item: Dict[str, Any]) -> Tuple[int, int, int]:
     status_order = {"open": 0, "tbd": 1, "closed": 2}
-    days = item["days_to_deadline"] if item["days_to_deadline"] is not None else 10**9
+    days = (
+        item["days_to_deadline"]
+        if item["days_to_deadline"] is not None
+        else 10**9
+    )
     closed_year = -int(item["year"] or 0) if item["status"] == "closed" else 0
     return status_order.get(item["status"], 3), days, closed_year
 
@@ -370,7 +432,9 @@ def render_ics(results: List[Dict[str, Any]]) -> str:
             utc_dt = deadline_dt.astimezone(timezone.utc)
             ics_dt = utc_dt.strftime("%Y%m%dT%H%M%SZ")
 
-            summary = result.get("title") or result.get("conference") or "Conference"
+            summary = (
+                result.get("title") or result.get("conference") or "Conference"
+            )
 
             url = result.get("url") or ""
             parts: List[str] = []
@@ -405,14 +469,23 @@ def render_markdown(results: List[Dict[str, Any]]) -> str:
     for item in results:
         rank = item["rank"]
         next_deadline = next(
-            (deadline for deadline in item["deadlines"] if deadline["deadline"] != "TBD"),
+            (
+                deadline
+                for deadline in item["deadlines"]
+                if deadline["deadline"] != "TBD"
+            ),
             None,
         )
         deadline_text = next_deadline["deadline"] if next_deadline else "TBD"
         rank_text = "/".join(
-            value for value in (rank.get("ccf"), rank.get("core"), rank.get("thcpl")) if value
+            value
+            for value in (rank.get("ccf"), rank.get("core"), rank.get("thcpl"))
+            if value
         )
-        row = "| {title} | {rank} | {category} | {status} | {deadline} {tz} | {date} | {place} |"
+        row = (
+            "| {title} | {rank} | {category} | {status} | "
+            "{deadline} {tz} | {date} | {place} |"
+        )
         lines.append(
             row.format(
                 title=item.get("title") or "",
@@ -453,7 +526,9 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--url", default=DEFAULT_URL)
     parser.add_argument("--data-path", type=Path)
     parser.add_argument("--cache-path", type=Path, default=DEFAULT_CACHE)
-    parser.add_argument("--format", choices=["json", "markdown", "ics"], default="json")
+    parser.add_argument(
+        "--format", choices=["json", "markdown", "ics"], default="json"
+    )
     parser.add_argument("--limit", type=int)
     parser.add_argument("--now", help="UTC timestamp for deterministic tests")
 
@@ -490,18 +565,27 @@ def run_query(args: argparse.Namespace) -> int:
         domain_cats, domain_name = resolve_domain(domain)
         if domain_cats is None:
             known = ", ".join(sorted(DOMAIN_MAP))
-            raise SystemExit(f"Unknown domain '{domain}'. Known domains: {known}")
+            raise SystemExit(
+                f"Unknown domain '{domain}'. Known domains: {known}"
+            )
         if categories:
             old_cats = list(categories)
             categories = list(sorted(set(categories) | set(domain_cats)))
+            domain_categories = ",".join(domain_cats)
+            old_categories = ",".join(old_cats)
+            merged_categories = ",".join(categories)
             extra_notes.append(
-                f"domain preset '{domain}' ({domain_name}) → categories {','.join(domain_cats)}; "
-                f"unioned with --category {','.join(old_cats)} → {','.join(categories)}"
+                f"domain preset '{domain}' ({domain_name}) → "
+                f"categories {domain_categories}; "
+                f"unioned with --category {old_categories} → "
+                f"{merged_categories}"
             )
         else:
             categories = domain_cats
+            domain_categories = ",".join(domain_cats)
             extra_notes.append(
-                f"domain preset '{domain}' ({domain_name}) → categories {','.join(domain_cats)}"
+                f"domain preset '{domain}' ({domain_name}) → "
+                f"categories {domain_categories}"
             )
     filters = QueryFilters(
         query=getattr(args, "query", None),
@@ -521,7 +605,9 @@ def run_query(args: argparse.Namespace) -> int:
     else:
         print(
             json.dumps(
-                build_envelope(results, source, now=now, extra_notes=extra_notes),
+                build_envelope(
+                    results, source, now=now, extra_notes=extra_notes
+                ),
                 ensure_ascii=False,
                 indent=2,
             )
@@ -530,15 +616,23 @@ def run_query(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Query ccfddl conference deadline YAML")
+    parser = argparse.ArgumentParser(
+        description="Query ccfddl conference deadline YAML"
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    search = subparsers.add_parser("search", help="Search by conference id, title, or description")
+    search = subparsers.add_parser(
+        "search", help="Search by conference id, title, or description"
+    )
     add_common_args(search)
     search.add_argument("--query", required=True)
-    search.add_argument("--accept-rates-path", type=Path, help="Path to accept_rates YAML")
+    search.add_argument(
+        "--accept-rates-path", type=Path, help="Path to accept_rates YAML"
+    )
 
-    list_cmd = subparsers.add_parser("list", help="List and filter conference instances")
+    list_cmd = subparsers.add_parser(
+        "list", help="List and filter conference instances"
+    )
     add_common_args(list_cmd)
     list_cmd.add_argument("--query")
     list_cmd.add_argument(
@@ -552,9 +646,13 @@ def build_parser() -> argparse.ArgumentParser:
     list_cmd.add_argument("--thcpl-rank")
     list_cmd.add_argument("--status")
     list_cmd.add_argument("--within-days", type=int)
-    list_cmd.add_argument("--accept-rates-path", type=Path, help="Path to accept_rates YAML")
+    list_cmd.add_argument(
+        "--accept-rates-path", type=Path, help="Path to accept_rates YAML"
+    )
 
-    refresh = subparsers.add_parser("refresh-cache", help="Refresh local cache and render results")
+    refresh = subparsers.add_parser(
+        "refresh-cache", help="Refresh local cache and render results"
+    )
     add_common_args(refresh)
 
     return parser

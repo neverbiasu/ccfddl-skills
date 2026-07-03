@@ -48,7 +48,9 @@ def test_filters_compose_category_rank_and_window():
 
     filtered = module.apply_filters(
         results,
-        module.QueryFilters(categories=["AI"], ccf_ranks=["A"], within_days=90),
+        module.QueryFilters(
+            categories=["AI"], ccf_ranks=["A"], within_days=90
+        ),
     )
 
     assert [item["id"] for item in filtered] == ["aifuture26"]
@@ -193,7 +195,8 @@ def test_domain_cv_returns_only_ai_cg_mx():
     allowed = {"AI", "CG", "MX"}
     for result in payload["results"]:
         assert result["category"] in allowed, (
-            f"conference {result['id']} has category {result['category']} not in {allowed}"
+            f"conference {result['id']} has category "
+            f"{result['category']} not in {allowed}"
         )
     assert any(r["category"] == "CG" for r in payload["results"])
     assert any(r["category"] == "MX" for r in payload["results"])
@@ -221,9 +224,13 @@ def test_domain_image_editing_avoids_nonexistent_cv():
     payload = json.loads(proc.stdout)
     for result in payload["results"]:
         assert result["category"] != "CV", (
-            f"conference {result['id']} has category 'CV' which should not exist"
+            f"conference {result['id']} has category 'CV' "
+            "which should not exist"
         )
-    assert any("domain preset" in note and "image-editing" in note for note in payload["notes"])
+    assert any(
+        "domain preset" in note and "image-editing" in note
+        for note in payload["notes"]
+    )
 
 
 def test_domain_relighting_includes_mapping_notes():
@@ -250,10 +257,14 @@ def test_domain_relighting_includes_mapping_notes():
         (note for note in payload["notes"] if "domain preset" in note),
         None,
     )
-    assert mapping_note is not None, "no domain-preset note found in JSON output"
+    assert (
+        mapping_note is not None
+    ), "no domain-preset note found in JSON output"
     assert "relighting" in mapping_note
     assert "categories" in mapping_note
-    assert "AI" in mapping_note and "CG" in mapping_note and "MX" in mapping_note
+    assert (
+        "AI" in mapping_note and "CG" in mapping_note and "MX" in mapping_note
+    )
 
 
 def test_accept_rates_not_loaded_when_not_requested():
@@ -265,14 +276,20 @@ def test_accept_rates_not_loaded_when_not_requested():
         now=datetime(2026, 7, 3, tzinfo=timezone.utc),
     )
     for item in results:
-        assert item.get("acceptance_rates") == [], (
-            f"{item['id']} should have empty acceptance_rates"
-        )
+        assert (
+            item.get("acceptance_rates") == []
+        ), f"{item['id']} should have empty acceptance_rates"
 
 
 def test_accept_rates_loaded_from_fixture():
-    """With --accept-rates-path, matching conferences get populated; non-matching get []."""
-    accept_rates_fixture = ROOT / "skills" / "ccfddl-query" / "fixtures" / "accept_rates.sample.yml"
+    """With --accept-rates-path, matching conferences get populated."""
+    accept_rates_fixture = (
+        ROOT
+        / "skills"
+        / "ccfddl-query"
+        / "fixtures"
+        / "accept_rates.sample.yml"
+    )
     proc = subprocess.run(
         [
             sys.executable,
@@ -303,7 +320,13 @@ def test_accept_rates_loaded_from_fixture():
 
 def test_accept_rates_merge_via_search():
     """Search subcommand also supports --accept-rates-path."""
-    accept_rates_fixture = ROOT / "skills" / "ccfddl-query" / "fixtures" / "accept_rates.sample.yml"
+    accept_rates_fixture = (
+        ROOT
+        / "skills"
+        / "ccfddl-query"
+        / "fixtures"
+        / "accept_rates.sample.yml"
+    )
     proc = subprocess.run(
         [
             sys.executable,
@@ -431,7 +454,7 @@ def test_ics_list_with_domain_preset():
     stdout = proc.stdout
     assert stdout.startswith("BEGIN:VCALENDAR")
     assert stdout.rstrip().endswith("END:VCALENDAR")
-    # Should have events for AIFUTURE (UTC-12), CGFUTURE (UTC+0), MXFUTURE (UTC+0)
+    # Should have events for AIFUTURE, CGFUTURE, and MXFUTURE.
     assert "SUMMARY:AIFUTURE 2026" in stdout
     assert "SUMMARY:CGFUTURE 2026" in stdout
     assert "SUMMARY:MXFUTURE 2026" in stdout
@@ -488,4 +511,6 @@ def test_live_allconf_smoke_when_enabled(tmp_path):
     assert payload["count"] >= 1
     assert payload["source"].startswith("https://ccfddl.github.io/")
     for item in payload["results"]:
-        assert {"id", "conference", "rank", "deadlines", "status"}.issubset(item)
+        assert {"id", "conference", "rank", "deadlines", "status"}.issubset(
+            item
+        )
