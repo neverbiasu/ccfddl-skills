@@ -1,0 +1,4 @@
+interface:
+  display_name: CCFDDL Query
+  short_description: Query ccfddl conference deadlines, ranks, categories, and status.
+  default_prompt: Find suitable research conferences from ccfddl data and explain the result using verified deadline information.

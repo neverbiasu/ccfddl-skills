@@ -1,0 +1,33 @@
+{
+  "name": "ccfddl-skills",
+  "owner": {
+    "name": "ccfddl-skills contributors"
+  },
+  "description": "Agent skills for querying ccfddl conference deadline data.",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "ccfddl-skills",
+      "source": "./",
+      "displayName": "CCFDDL Skills",
+      "description": "Query conference deadlines, ranks, categories, and submission windows from ccfddl data.",
+      "version": "0.1.0",
+      "author": {
+        "name": "ccfddl-skills contributors"
+      },
+      "license": "MIT",
+      "keywords": [
+        "agent-skills",
+        "research",
+        "conference-deadlines",
+        "ccfddl"
+      ],
+      "category": "productivity",
+      "tags": [
+        "research",
+        "deadlines",
+        "academic"
+      ]
+    }
+  ]
+}

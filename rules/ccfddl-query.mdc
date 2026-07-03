@@ -1,0 +1,29 @@
+---
+description: Query ccfddl conference deadlines for research submission planning
+---
+
+# CCFDDL Query
+
+Use this rule when the user asks about conference deadlines, CCF/CORE/THCPL ranks, categories, upcoming submission windows, or research submission planning.
+
+## Skill Reference
+
+The canonical skill definition lives at `skills/ccfddl-query/SKILL.md`. Read it first before crafting a query.
+
+## Execution
+
+Run the query script at `skills/ccfddl-query/scripts/query_conferences.py`:
+
+```bash
+python skills/ccfddl-query/scripts/query_conferences.py list --status open --format json
+```
+
+For structured agent consumption, always prefer `--format json`. Use `--format markdown` only for human-facing output.
+
+## Rules
+
+1. JSON first: prefer `--format json` for agent reasoning, then convert to prose for the user.
+2. No hallucination: do not invent deadlines, ranks, URLs, or acceptance rates. Every value must come from ccfddl data.
+3. Data source: upstream data is at `https://ccfddl.github.io/conference/allconf.yml`. The script caches locally. Use `--data-path` for offline/fixture mode.
+4. Categories: ccfddl uses `sub` as the category field, such as `AI`, `CG`, `HI`, or `MX`.
+5. Domain mapping: there is no native `CV` category. For CV, Image Editing, or Relighting, use `skills/ccfddl-query/references/domain-mapping.md`.

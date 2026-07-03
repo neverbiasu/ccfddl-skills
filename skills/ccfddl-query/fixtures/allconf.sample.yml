@@ -1,0 +1,110 @@
+- title: ICML
+  description: International Conference on Machine Learning
+  sub: AI
+  rank:
+    ccf: A
+    core: A*
+    thcpl: A
+  dblp: icml
+  confs:
+    - year: 2026
+      id: icml26
+      link: https://icml.cc/Conferences/2026
+      timeline:
+        - abstract_deadline: "2026-01-24 11:59:59"
+          deadline: "2026-01-29 11:59:59"
+          comment: Paper Submissions Open on OpenReview Jan 08 2026 12:00AM UTC-0
+      timezone: UTC+0
+      date: July 6-12, 2026
+      place: Seoul, Korea
+- title: CHI
+  description: ACM Conference on Human Factors in Computing Systems
+  sub: HI
+  rank:
+    ccf: A
+    core: A*
+    thcpl: A
+  dblp: chi
+  confs:
+    - year: 2026
+      id: chi26
+      link: https://chi2026.acm.org/
+      timeline:
+        - deadline: "2025-09-11 23:59:59"
+          comment: Full paper deadline.
+      timezone: AoE
+      date: April 13-17, 2026
+      place: Barcelona, Spain
+- title: FUTURETBD
+  description: Example conference with a pending deadline
+  sub: DB
+  rank:
+    ccf: B
+    core: N
+    thcpl: N
+  dblp: futuretbd
+  confs:
+    - year: 2027
+      id: futuretbd27
+      link: https://example.org/futuretbd
+      timeline:
+        - deadline: TBD
+          comment: Deadline has not been announced.
+      timezone: PT
+      date: TBD
+      place: TBD
+- title: AIFUTURE
+  description: Synthetic AI conference used for deterministic upcoming-deadline tests
+  sub: AI
+  rank:
+    ccf: A
+    core: A
+    thcpl: B
+  dblp: aifuture
+  confs:
+    - year: 2026
+      id: aifuture26
+      link: https://example.org/aifuture2026
+      timeline:
+        - abstract_deadline: "2026-08-01 23:59:59"
+          deadline: "2026-08-15 23:59:59"
+          comment: Synthetic fixture deadline, not a real conference.
+      timezone: UTC-12
+      date: December 1-5, 2026
+      place: Test City
+- title: CGFUTURE
+  description: Synthetic CG conference used for domain-preset tests; not a real conference
+  sub: CG
+  rank:
+    ccf: B
+    core: A
+    thcpl: B
+  dblp: cgfuture
+  confs:
+    - year: 2026
+      id: cgfuture26
+      link: https://example.org/cgfuture2026
+      timeline:
+        - deadline: "2026-10-01 23:59:59"
+          comment: Synthetic fixture deadline, not a real conference.
+      timezone: UTC+0
+      date: November 10-14, 2026
+      place: Graphics City
+- title: MXFUTURE
+  description: Synthetic MX conference used for domain-preset tests; not a real conference
+  sub: MX
+  rank:
+    ccf: B
+    core: B
+    thcpl: B
+  dblp: mxfuture
+  confs:
+    - year: 2026
+      id: mxfuture26
+      link: https://example.org/mxfuture2026
+      timeline:
+        - deadline: "2026-11-15 23:59:59"
+          comment: Synthetic fixture deadline, not a real conference.
+      timezone: UTC+0
+      date: December 20-24, 2026
+      place: Media City

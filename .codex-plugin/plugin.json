@@ -1,0 +1,33 @@
+{
+  "name": "ccfddl-skills",
+  "version": "0.1.0",
+  "description": "Agent skills for querying ccfddl conference deadline data.",
+  "author": {
+    "name": "ccfddl-skills contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "research",
+    "conference-deadlines",
+    "ccfddl"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "CCFDDL Skills",
+    "shortDescription": "Query conference deadlines and ranks from ccfddl.",
+    "longDescription": "Helps coding agents answer research submission planning questions using ccfddl YAML data, including deadline search, rank/category filters, domain mappings, acceptance-rate overlays, and calendar export.",
+    "developerName": "ccfddl-skills contributors",
+    "category": "Productivity",
+    "capabilities": [
+      "Research",
+      "Planning"
+    ],
+    "defaultPrompt": [
+      "Find open CCF-A AI conferences in the next 180 days.",
+      "When is the next ICML deadline?",
+      "Find CV conferences for an image editing paper."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

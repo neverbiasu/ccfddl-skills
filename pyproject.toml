@@ -1,0 +1,26 @@
+[project]
+name = "ccfddl-skills"
+version = "0.1.0"
+description = "Agent Skills for querying ccfddl conference deadline data."
+requires-python = ">=3.9"
+dependencies = [
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.15",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["UP006", "UP007", "UP035", "UP045"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
