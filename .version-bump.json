@@ -1,0 +1,23 @@
+{
+  "files": [
+    { "path": "package.json", "field": "version" },
+    { "path": "pyproject.toml", "field": "project.version" },
+    { "path": ".codex-plugin/plugin.json", "field": "version" },
+    { "path": ".claude-plugin/plugin.json", "field": "version" },
+    { "path": ".cursor-plugin/plugin.json", "field": "version" },
+    { "path": ".claude-plugin/marketplace.json", "field": "plugins.0.version" },
+    { "path": ".cursor-plugin/marketplace.json", "field": "metadata.version" },
+    { "path": ".cursor-plugin/marketplace.json", "field": "plugins.0.version" }
+  ],
+  "audit": {
+    "exclude": [
+      ".git",
+      ".venv",
+      ".pytest_cache",
+      ".ruff_cache",
+      "docs",
+      "tasks",
+      ".version-bump.json"
+    ]
+  }
+}

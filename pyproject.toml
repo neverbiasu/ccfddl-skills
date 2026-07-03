@@ -19,6 +19,7 @@ dev = [
   "pytest>=8.0",
   "ruff>=0.15",
   "black>=25.0",
+  "tomli>=1.1; python_version < '3.11'",
 ]
 
 [tool.black]

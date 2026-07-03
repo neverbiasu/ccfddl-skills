@@ -8,7 +8,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "skills" / "ccfddl-query" / "scripts" / "query_conferences.py"
 FIXTURE = ROOT / "skills" / "ccfddl-query" / "fixtures" / "allconf.sample.yml"
 

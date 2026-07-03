@@ -1,0 +1,16 @@
+# Keep scripts and text files stable across platforms.
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.mdc text eol=lf
+
+# Binary assets, if added later.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
