@@ -65,33 +65,32 @@ Installation differs by harness. If you use more than one coding agent, install
 
 ### Codex
 
-This repository ships Codex plugin metadata and a workspace marketplace entry:
+Install from this repository root:
 
-```text
-.codex-plugin/plugin.json
-.agents/plugins/marketplace.json
+```bash
+codex plugin marketplace add ./
+codex plugin add ccfddl-skills@ccfddl-skills
 ```
 
-In a local workflow, add this repository as a plugin source in Codex and enable
-`ccfddl-skills`. After publication, the marketplace entry should resolve to the
-repository root and expose the shared `ccfddl-query` skill automatically.
+This uses the marketplace manifest at `.agents/plugins/marketplace.json` and
+installs the plugin declared by `.codex-plugin/plugin.json`.
 
 ### Claude Code
 
-This repository ships Claude Code plugin and marketplace metadata:
+Install from this repository root:
 
-```text
-.claude-plugin/plugin.json
-.claude-plugin/marketplace.json
+```bash
+claude plugin marketplace add ./
+claude plugin install ccfddl-skills@ccfddl-skills
 ```
 
-Register the repository as a plugin or marketplace source in Claude Code, then
-install `ccfddl-skills`. The plugin should expose the same shared skill rather
-than a Claude-specific fork.
+This uses the marketplace manifest at `.claude-plugin/marketplace.json` and the
+plugin manifest at `.claude-plugin/plugin.json`.
 
 ### Cursor
 
-Cursor support is provided through plugin metadata plus shared rules:
+Cursor support in this repository is provided through plugin metadata plus
+shared rules:
 
 ```text
 .cursor-plugin/plugin.json
@@ -100,8 +99,9 @@ rules/ccfddl-query.mdc
 .cursor/rules/ccfddl-query.mdc
 ```
 
-Install the plugin from a repository-backed source when available. For project
-compatibility mode, the rule files point Cursor back to the same skill.
+When the plugin is published to a Cursor-accessible marketplace or repo source,
+install `ccfddl-skills` there. Until then, the project-level rules keep Cursor
+aligned with the shared skill in this repository.
 
 ### Trae
 
@@ -116,14 +116,20 @@ added.
 
 ### Antigravity
 
-Antigravity currently uses a compatibility rule:
+Install directly from this repository root:
 
-```text
-antigravity/ccfddl-query.md
+```bash
+agy plugin install .
 ```
 
-The rule is intentionally thin and exists to route the agent back to the shared
-`ccfddl-query` skill.
+The install consumes the shared skill from this checkout. The Antigravity
+adapter file under `antigravity/` stays intentionally thin.
+
+### OpenCode
+
+OpenCode is not yet shipped here as a published npm plugin. Its official plugin
+flow is npm/config-driven rather than local marketplace registration, so this
+repository is not currently installable there as a first-class OpenCode plugin.
 
 ## The Basic Workflow
 
