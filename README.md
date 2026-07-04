@@ -31,7 +31,7 @@ If you are developing or testing the plugin locally, start from a checkout of
 this repository:
 
 ```bash
-git clone https://github.com/neverbiasu/ccfddl-skills.git
+git clone <repo-url>
 cd ccfddl-skills
 python -m venv .venv
 source .venv/bin/activate
@@ -65,7 +65,15 @@ Installation differs by harness. If you use more than one coding agent, install
 
 ### Codex
 
-Install from this repository root:
+After this repository is published on GitHub, install it in the same style as
+Superpowers:
+
+```bash
+codex plugin marketplace add neverbiasu/ccfddl-skills
+codex plugin add ccfddl-skills@ccfddl-skills
+```
+
+For local development and testing, install from this repository root:
 
 ```bash
 codex plugin marketplace add ./
@@ -77,7 +85,15 @@ installs the plugin declared by `.codex-plugin/plugin.json`.
 
 ### Claude Code
 
-Install from this repository root:
+After this repository is published on GitHub, install it in the same style as
+Superpowers:
+
+```bash
+claude plugin marketplace add neverbiasu/ccfddl-skills
+claude plugin install ccfddl-skills@ccfddl-skills
+```
+
+For local development and testing, install from this repository root:
 
 ```bash
 claude plugin marketplace add ./
