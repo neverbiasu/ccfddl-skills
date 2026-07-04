@@ -105,41 +105,48 @@ plugin manifest at `.claude-plugin/plugin.json`.
 
 ### Cursor
 
-Cursor support in this repository is provided through plugin metadata plus
-shared rules:
+After this repository is published on GitHub, install it in the same style as
+Superpowers:
 
 ```text
-.cursor-plugin/plugin.json
-.cursor-plugin/marketplace.json
-rules/ccfddl-query.mdc
-.cursor/rules/ccfddl-query.mdc
+/add-plugin ccfddl-skills
 ```
 
-When the plugin is published to a Cursor-accessible marketplace or repo source,
-install `ccfddl-skills` there. Until then, the project-level rules keep Cursor
-aligned with the shared skill in this repository.
+Or search for `ccfddl-skills` in the plugin marketplace.
+
+The repository already includes `.cursor-plugin/` metadata plus shared rule
+files. After you push the repo, we can verify whether the marketplace install
+path is enough on its own or whether Cursor still wants an additional repo
+registration step.
 
 ### Trae
 
-Trae currently uses a compatibility rule:
+This repository already includes a Trae compatibility rule:
 
 ```text
 .trae/rules/ccfddl-query.md
 ```
 
-This keeps Trae aligned with the shared skill until a fuller plugin package is
-added.
+We have not yet verified the best published install command for Trae. After the
+repository is pushed, we can test whether it supports a direct remote plugin
+install flow or still wants project-level rule setup.
 
 ### Antigravity
 
-Install directly from this repository root:
+After this repository is published on GitHub, install it remotely:
+
+```bash
+agy plugin install https://github.com/neverbiasu/ccfddl-skills
+```
+
+For local development and testing, install from this repository root:
 
 ```bash
 agy plugin install .
 ```
 
-The install consumes the shared skill from this checkout. The Antigravity
-adapter file under `antigravity/` stays intentionally thin.
+The adapter file under `antigravity/` stays intentionally thin and routes back
+to the shared skill.
 
 ### OpenCode
 
