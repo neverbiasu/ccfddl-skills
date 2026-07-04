@@ -103,7 +103,7 @@ plugin manifest at `.claude-plugin/plugin.json`.
 
 ### Cursor
 
-Install it in the same style as Superpowers:
+Cursor's likely install path is:
 
 ```text
 /add-plugin ccfddl-skills
@@ -112,7 +112,8 @@ Install it in the same style as Superpowers:
 Or search for `ccfddl-skills` in the plugin marketplace.
 
 The repository already includes `.cursor-plugin/` metadata plus shared rule
-files. The published install path still needs a live Cursor-side verification.
+files, but this published install path has not yet been verified on this
+machine.
 
 ### Trae
 
@@ -122,9 +123,9 @@ This repository already includes a Trae compatibility rule:
 .trae/rules/ccfddl-query.md
 ```
 
-We have not yet verified the best published install command for Trae. After the
-repository is pushed, we can test whether it supports a direct remote plugin
-install flow or still wants project-level rule setup.
+We have not yet verified the best published install command for Trae on this
+machine. It may support a direct remote plugin install flow, or it may still
+want project-level rule setup.
 
 ### Antigravity
 
