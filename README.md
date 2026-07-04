@@ -1,170 +1,220 @@
 # ccfddl-skills
 
-`ccfddl-skills` packages the static
-[`ccfddl`](https://github.com/ccfddl/ccf-deadlines) conference-deadline data as
-agent skills and plugins for research submission planning.
+Agent skills and plugins for querying
+[`ccfddl`](https://github.com/ccfddl/ccf-deadlines) conference-deadline data.
 
-Ask your coding agent things like:
+`ccfddl-skills` helps coding agents answer research-planning questions such as:
 
 - "When is the next ICML deadline?"
 - "Find open CCF-A AI conferences in the next 180 days."
 - "I have an image editing paper. Which CV-related venues should I consider?"
 
-The agent uses deterministic YAML parsing and filtering. It should not invent
-deadlines, ranks, URLs, or acceptance rates.
+The project intentionally keeps the reasoning layer thin. Agents call a
+deterministic Python CLI, receive structured JSON or Markdown, and should never
+invent deadlines, ranks, locations, DBLP links, or acceptance rates.
 
-## Quickstart
+## Status
 
-Install development dependencies:
+Current release: `1.0.0`
+
+The first release focuses on one production-ready skill:
+
+- `ccfddl-query`: fetch, parse, filter, and render `ccfddl` conference data.
+
+## Install
+
+Clone the repository and install the Python package:
 
 ```bash
+git clone https://github.com/neverbiasu/ccfddl-skills.git
+cd ccfddl-skills
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install ".[dev]"
 ```
 
-Run a query against live `ccfddl` data:
+Confirm the command is available:
 
 ```bash
-python skills/ccfddl-query/scripts/query_conferences.py \
-  list \
+ccfddl-query --help
+```
+
+Run a deterministic offline query:
+
+```bash
+ccfddl-query search \
+  --data-path skills/ccfddl-query/fixtures/allconf.sample.yml \
+  --query ICML \
+  --format json
+```
+
+Run against live `ccfddl` data:
+
+```bash
+ccfddl-query list \
   --domain cv \
   --status open \
   --within-days 180 \
   --format json
 ```
 
-Use fixture data when you want deterministic offline output:
+## Agent Support
+
+The repository is organized like an agent-skill/plugin distribution. The shared
+skill lives in `skills/ccfddl-query/SKILL.md`; platform adapters stay thin and
+point back to that single implementation.
+
+| Platform | Status | Files |
+|---|---:|---|
+| Codex | supported | `.codex-plugin/`, `.agents/plugins/` |
+| Claude Code | supported | `.claude-plugin/` |
+| Cursor | supported | `.cursor-plugin/`, `.cursor/rules/`, `rules/` |
+| Trae | compatibility rules | `.trae/rules/` |
+| Antigravity | compatibility instructions | `antigravity/` |
+| OpenCode, Cline, OpenHands, Kimi, Factory | planned | `adapters/README.md` |
+
+Marketplace manifests are included for platforms that expose a documented
+marketplace or plugin index format in this repo layout:
+
+- Codex: `.agents/plugins/marketplace.json`
+- Claude Code: `.claude-plugin/marketplace.json`
+- Cursor: `.cursor-plugin/marketplace.json`
+
+After publishing the repository, point the corresponding agent marketplace or
+plugin installer at the repository root, then enable the `ccfddl-query` skill.
+
+## Usage
+
+The installable CLI is `ccfddl-query`.
+
+Search by conference id or title:
 
 ```bash
-python skills/ccfddl-query/scripts/query_conferences.py \
-  search \
-  --data-path skills/ccfddl-query/fixtures/allconf.sample.yml \
-  --query ICML \
-  --format json
+ccfddl-query search --query ICML --format markdown
 ```
 
-## How It Works
+List open CCF-A AI conferences:
 
-The core implementation is a small Python CLI at
-`skills/ccfddl-query/scripts/query_conferences.py`.
+```bash
+ccfddl-query list \
+  --category AI \
+  --ccf-rank A \
+  --status open \
+  --within-days 180
+```
 
-It:
+Find computer-vision-adjacent venues:
 
-1. Fetches `https://ccfddl.github.io/conference/allconf.yml`.
-2. Falls back to a local cache when the network is unavailable.
-3. Parses the upstream YAML shape with `PyYAML`.
-4. Flattens conference-year records into agent-friendly JSON.
-5. Filters by search query, ccfddl category, rank, status, deadline window, or
-   research-domain preset.
-6. Renders JSON, Markdown, or ICS calendar output.
+```bash
+ccfddl-query list --domain cv --status open
+```
 
-The skill instructions in `skills/ccfddl-query/SKILL.md` tell agents when to
-call the CLI and how to explain results to users.
+Render calendar data:
 
-## Installation
+```bash
+ccfddl-query list --domain image-editing --status open --format ics
+```
 
-The repository includes first-class plugin manifests for the agent platforms
-that currently have clear local plugin/marketplace formats.
+The source-compatible script path remains available for agents that execute
+tools from the skill directory directly:
 
-### Codex
+```bash
+python skills/ccfddl-query/scripts/query_conferences.py list --domain cv
+```
 
-- Plugin manifest: `.codex-plugin/plugin.json`
-- Repo marketplace: `.agents/plugins/marketplace.json`
-- Skill: `skills/ccfddl-query/SKILL.md`
+## Data Model
 
-### Claude Code
-
-- Plugin manifest: `.claude-plugin/plugin.json`
-- Marketplace manifest: `.claude-plugin/marketplace.json`
-- Skill: `skills/ccfddl-query/SKILL.md`
-
-### Cursor
-
-- Plugin manifest: `.cursor-plugin/plugin.json`
-- Marketplace manifest: `.cursor-plugin/marketplace.json`
-- Plugin rule: `rules/ccfddl-query.mdc`
-- Compatibility project rule: `.cursor/rules/ccfddl-query.mdc`
-
-### Compatibility Entrypoints
-
-Thin compatibility instructions are also present for:
-
-- `.agents/plugins/ccfddl-query.md`
-- `.trae/rules/ccfddl-query.md`
-- `antigravity/ccfddl-query.md`
-
-See `adapters/README.md` for the support matrix and planned platforms.
-
-## What's Inside
+By default, the CLI fetches:
 
 ```text
-.agents/plugins/
-.claude-plugin/
-.codex-plugin/
-.cursor-plugin/
-.cursor/
-.trae/
-adapters/
-antigravity/
-examples/
-rules/
-scripts/
-skills/
-tests/
-package.json
-pyproject.toml
+https://ccfddl.github.io/conference/allconf.yml
 ```
 
-The public product surface is the `ccfddl-query` skill:
+It caches the file at:
 
 ```text
-skills/ccfddl-query/
-  SKILL.md
-  agents/openai.yaml
-  fixtures/
-  references/
-  scripts/query_conferences.py
+~/.cache/ccfddl-skills/allconf.yml
 ```
 
-Local planning material lives under `docs/` and `tasks/`; both are ignored and
-not part of the published repository.
+Use `--data-path` for offline or deterministic runs. The parser follows the
+upstream `ccfddl` YAML shape and flattens conference-year records into
+agent-friendly result objects with:
+
+- conference id, title, year, description, date, and place
+- CCF, CORE, and THCPL ranks
+- DBLP and conference URLs when available
+- normalized deadline status: `open`, `closed`, or `tbd`
+- local deadline timestamps and timezone notes
+- optional acceptance-rate data when `--accept-rates-path` is provided
 
 ## Domain Presets
 
 `ccfddl` does not have a native `CV` category. This project provides a small
-agent-side mapping layer:
+agent-side mapping layer for common research questions:
 
 - `cv` / `computer-vision` -> `AI`, `CG`, `MX`
 - `image-editing` -> `AI`, `CG`, `MX`
 - `relighting` -> `AI`, `CG`, `MX`
 
-The output notes always explain that these are convenience mappings, not
+JSON output includes notes explaining that these are convenience mappings, not
 upstream categories.
 
-## Testing
+## Repository Layout
 
-Tests are split by purpose:
+```text
+.agents/plugins/              Codex-style repo marketplace metadata
+.claude-plugin/               Claude Code plugin and marketplace manifests
+.codex-plugin/                Codex plugin manifest
+.cursor-plugin/               Cursor plugin and marketplace manifests
+.cursor/rules/                Cursor compatibility rule
+.trae/rules/                  Trae compatibility rule
+adapters/                     Platform support matrix and adapter notes
+antigravity/                  Antigravity compatibility instruction
+ccfddl_skills/                Installable Python package
+examples/                     Example prompts and expected workflows
+rules/                        Shared agent rule files
+scripts/                      Maintainer scripts
+skills/ccfddl-query/          Agent skill, references, fixtures, CLI wrapper
+tests/python/                 Query and data transformation tests
+tests/plugins/                Plugin and marketplace manifest tests
+```
 
-- `tests/python/` checks the query CLI and data transformations.
-- `tests/plugins/` checks plugin and marketplace manifests.
+Local planning material can live under `docs/` and `tasks/`; both are ignored
+and are not part of the published package.
 
-Run everything:
+## Test
+
+Run the full local check:
 
 ```bash
 scripts/check.sh
 ```
 
-The check script runs:
+This runs:
 
-1. `pytest`
-2. `ruff check .`
-3. `black --check .`
+- `pytest`
+- `ruff check .`
+- `black --check .`
 
-Additional validators used before release:
+Run the optional live smoke test when you want to verify the current upstream
+`allconf.yml` endpoint:
 
 ```bash
-.venv/bin/python /Users/nev4rb14su/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
-.venv/bin/python /Users/nev4rb14su/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/ccfddl-query
+CCFDDL_LIVE_TEST=1 pytest tests/python/test_query_conferences.py
 ```
+
+Run an install smoke test from a clean virtual environment:
+
+```bash
+python -m venv /tmp/ccfddl-skills-install-test
+/tmp/ccfddl-skills-install-test/bin/python -m pip install .
+/tmp/ccfddl-skills-install-test/bin/ccfddl-query search \
+  --data-path skills/ccfddl-query/fixtures/allconf.sample.yml \
+  --query ICML
+```
+
+If you have the platform validator tools installed locally, run them before a
+release against the repository root and `skills/ccfddl-query`.
 
 ## Design Constraints
 
@@ -173,6 +223,17 @@ Additional validators used before release:
 - Keep adapter layers thin; do not fork query logic per agent.
 - Prefer JSON for agent reasoning and Markdown for human display.
 - Never invent missing conference metadata.
+
+## Contributing
+
+Contributions are welcome, especially:
+
+- new platform adapters backed by official plugin/skill documentation
+- better domain presets for research areas
+- parser support for additional upstream `ccfddl` metadata
+- showcase prompts for real research submission workflows
+
+Please run `scripts/check.sh` before opening a pull request.
 
 ## License
 

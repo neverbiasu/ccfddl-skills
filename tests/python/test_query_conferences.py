@@ -14,7 +14,10 @@ FIXTURE = ROOT / "skills" / "ccfddl-query" / "fixtures" / "allconf.sample.yml"
 
 
 def load_module():
-    spec = importlib.util.spec_from_file_location("query_conferences", SCRIPT)
+    module_path = ROOT / "ccfddl_skills" / "query_conferences.py"
+    spec = importlib.util.spec_from_file_location(
+        "ccfddl_skills.query_conferences", module_path
+    )
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     sys.modules[spec.name] = module
@@ -89,6 +92,30 @@ def test_cli_json_search():
     assert payload["count"] == 1
     assert payload["results"][0]["id"] == "icml26"
     assert payload["results"][0]["status"] == "closed"
+
+
+def test_package_module_cli_json_search():
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ccfddl_skills.query_conferences",
+            "search",
+            "--data-path",
+            str(FIXTURE),
+            "--query",
+            "ICML",
+            "--now",
+            "2026-07-03T00:00:00+00:00",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        cwd=ROOT,
+    )
+    payload = json.loads(proc.stdout)
+    assert payload["count"] == 1
+    assert payload["results"][0]["id"] == "icml26"
 
 
 def test_short_search_does_not_match_inside_description_words():

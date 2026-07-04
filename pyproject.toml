@@ -12,7 +12,10 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = []
+packages = ["ccfddl_skills"]
+
+[project.scripts]
+ccfddl-query = "ccfddl_skills.query_conferences:main"
 
 [project.optional-dependencies]
 dev = [

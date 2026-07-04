@@ -77,5 +77,18 @@ def test_required_public_files_exist():
         ".version-bump.json",
         "skills/ccfddl-query/SKILL.md",
         "skills/ccfddl-query/scripts/query_conferences.py",
+        "ccfddl_skills/__init__.py",
+        "ccfddl_skills/query_conferences.py",
     ]:
         assert (ROOT / path).exists(), f"{path} is missing"
+
+
+def test_package_exposes_installable_cli():
+    pyproject = tomllib.loads(
+        (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    )
+    assert pyproject["tool"]["setuptools"]["packages"] == ["ccfddl_skills"]
+    assert (
+        pyproject["project"]["scripts"]["ccfddl-query"]
+        == "ccfddl_skills.query_conferences:main"
+    )
