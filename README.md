@@ -31,7 +31,7 @@ If you are developing or testing the plugin locally, start from a checkout of
 this repository:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/neverbiasu/ccfddl-skills.git
 cd ccfddl-skills
 python -m venv .venv
 source .venv/bin/activate
@@ -65,8 +65,7 @@ Installation differs by harness. If you use more than one coding agent, install
 
 ### Codex
 
-After this repository is published on GitHub, install it in the same style as
-Superpowers:
+Install it in the same style as Superpowers:
 
 ```bash
 codex plugin marketplace add neverbiasu/ccfddl-skills
@@ -85,8 +84,7 @@ installs the plugin declared by `.codex-plugin/plugin.json`.
 
 ### Claude Code
 
-After this repository is published on GitHub, install it in the same style as
-Superpowers:
+Install it in the same style as Superpowers:
 
 ```bash
 claude plugin marketplace add neverbiasu/ccfddl-skills
@@ -105,8 +103,7 @@ plugin manifest at `.claude-plugin/plugin.json`.
 
 ### Cursor
 
-After this repository is published on GitHub, install it in the same style as
-Superpowers:
+Install it in the same style as Superpowers:
 
 ```text
 /add-plugin ccfddl-skills
@@ -115,9 +112,7 @@ Superpowers:
 Or search for `ccfddl-skills` in the plugin marketplace.
 
 The repository already includes `.cursor-plugin/` metadata plus shared rule
-files. After you push the repo, we can verify whether the marketplace install
-path is enough on its own or whether Cursor still wants an additional repo
-registration step.
+files. The published install path still needs a live Cursor-side verification.
 
 ### Trae
 
@@ -133,7 +128,7 @@ install flow or still wants project-level rule setup.
 
 ### Antigravity
 
-After this repository is published on GitHub, install it remotely:
+Install it remotely:
 
 ```bash
 agy plugin install https://github.com/neverbiasu/ccfddl-skills
