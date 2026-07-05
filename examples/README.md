@@ -195,3 +195,19 @@ python skills/ccfddl-query/scripts/query_conferences.py list \
 - CLI: `skills/ccfddl-query/scripts/query_conferences.py --help`
 - Domain mapping reference: `skills/ccfddl-query/references/domain-mapping.md`
 - Output schema: `skills/ccfddl-query/references/output-schema.md`
+
+## Four-Agent Recording
+
+To record a side-by-side CLI showcase, you can use:
+
+```bash
+scripts/showcase-4agents.sh "我做 Relighting，有哪些会议可以考虑？"
+```
+
+This creates a 2x2 `tmux` layout for `Claude Code`, `Codex`, `OpenCode`, and
+`Antigravity`, runs the same prompt through all four, and saves transcripts
+under `/tmp/ccfddl-showcase-*/`.
+
+For video capture on macOS, `Recordly`, `QuickTime Player`, or `Cmd-Shift-5`
+all work well. `Recordly` is a good fit when you want lightweight screen
+recording without additional editing setup.
