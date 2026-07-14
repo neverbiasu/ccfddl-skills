@@ -11,7 +11,13 @@ ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ccfddl_skills.query_conferences import main
+try:
+    from ccfddl_skills.query_conferences import main
+except ModuleNotFoundError:
+    # Some plugin installers only copy the skills subtree, not the repo-level
+    # Python package. Fall back to the vendored implementation next to this
+    # wrapper so the skill remains runnable in those environments.
+    from query_conferences_impl import main
 
 
 if __name__ == "__main__":

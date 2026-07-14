@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -112,6 +113,46 @@ def test_package_module_cli_json_search():
         capture_output=True,
         text=True,
         cwd=ROOT,
+    )
+    payload = json.loads(proc.stdout)
+    assert payload["count"] == 1
+    assert payload["results"][0]["id"] == "icml26"
+
+
+def test_skills_only_install_wrapper_falls_back_to_vendored_impl(tmp_path):
+    install_root = tmp_path / "ccfddl-plugin"
+    shutil.copytree(ROOT / "skills", install_root / "skills")
+    script = (
+        install_root
+        / "skills"
+        / "ccfddl-query"
+        / "scripts"
+        / "query_conferences.py"
+    )
+    fixture = (
+        install_root
+        / "skills"
+        / "ccfddl-query"
+        / "fixtures"
+        / "allconf.sample.yml"
+    )
+
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "search",
+            "--data-path",
+            str(fixture),
+            "--query",
+            "ICML",
+            "--now",
+            "2026-07-03T00:00:00+00:00",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        cwd=install_root,
     )
     payload = json.loads(proc.stdout)
     assert payload["count"] == 1
