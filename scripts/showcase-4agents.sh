@@ -34,8 +34,10 @@ PROMPT="$1"
 SESSION_NAME="ccfddl-showcase"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_DIR="/tmp/${SESSION_NAME}-${STAMP}"
+PROMPT_FILE="$LOG_DIR/prompt.txt"
 
 mkdir -p "$LOG_DIR"
+printf '%s\n' "$PROMPT" >"$PROMPT_FILE"
 
 if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
   echo "tmux session '$SESSION_NAME' already exists. Attach with:" >&2
@@ -43,17 +45,48 @@ if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
   exit 1
 fi
 
-shell_quote() {
-  printf "%q" "$1"
+ROOT_DIR="$(pwd)"
+
+write_runner() {
+  local path="$1"
+  local label="$2"
+  local command="$3"
+  cat >"$path" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+cd $(printf '%q' "$ROOT_DIR")
+$command | tee "$LOG_DIR/$label.txt"
+echo
+echo '[$label finished]'
+exec "\$SHELL"
+EOF
+  chmod +x "$path"
 }
 
-PROMPT_Q="$(shell_quote "$PROMPT")"
-ROOT_Q="$(shell_quote "$(pwd)")"
+CLAUDE_RUNNER="$LOG_DIR/run-claude.sh"
+CODEX_RUNNER="$LOG_DIR/run-codex.sh"
+OPENCODE_RUNNER="$LOG_DIR/run-opencode.sh"
+AGY_RUNNER="$LOG_DIR/run-antigravity.sh"
 
-CLAUDE_CMD="cd $ROOT_Q && claude -p $PROMPT_Q | tee \"$LOG_DIR/claude.txt\"; echo; echo '[Claude finished]'; exec \$SHELL"
-CODEX_CMD="cd $ROOT_Q && codex exec $PROMPT_Q | tee \"$LOG_DIR/codex.txt\"; echo; echo '[Codex finished]'; exec \$SHELL"
-OPENCODE_CMD="cd $ROOT_Q && opencode run $PROMPT_Q | tee \"$LOG_DIR/opencode.txt\"; echo; echo '[OpenCode finished]'; exec \$SHELL"
-AGY_CMD="cd $ROOT_Q && agy --print $PROMPT_Q | tee \"$LOG_DIR/antigravity.txt\"; echo; echo '[Antigravity finished]'; exec \$SHELL"
+write_runner \
+  "$CLAUDE_RUNNER" \
+  "Claude" \
+  "claude -p < $(printf '%q' "$PROMPT_FILE")"
+
+write_runner \
+  "$CODEX_RUNNER" \
+  "Codex" \
+  "codex exec - < $(printf '%q' "$PROMPT_FILE")"
+
+write_runner \
+  "$OPENCODE_RUNNER" \
+  "OpenCode" \
+  "opencode run \"\$(cat $(printf '%q' "$PROMPT_FILE"))\""
+
+write_runner \
+  "$AGY_RUNNER" \
+  "Antigravity" \
+  "agy --print \"\$(cat $(printf '%q' "$PROMPT_FILE"))\""
 
 tmux new-session -d -s "$SESSION_NAME" -n showcase
 tmux split-window -h -t "$SESSION_NAME":0
@@ -66,10 +99,10 @@ tmux select-pane -t "$SESSION_NAME":0.1 -T "Codex"
 tmux select-pane -t "$SESSION_NAME":0.2 -T "OpenCode"
 tmux select-pane -t "$SESSION_NAME":0.3 -T "Antigravity"
 
-tmux send-keys -t "$SESSION_NAME":0.0 "$CLAUDE_CMD" C-m
-tmux send-keys -t "$SESSION_NAME":0.1 "$CODEX_CMD" C-m
-tmux send-keys -t "$SESSION_NAME":0.2 "$OPENCODE_CMD" C-m
-tmux send-keys -t "$SESSION_NAME":0.3 "$AGY_CMD" C-m
+tmux send-keys -t "$SESSION_NAME":0.0 "bash $(printf '%q' "$CLAUDE_RUNNER")" C-m
+tmux send-keys -t "$SESSION_NAME":0.1 "bash $(printf '%q' "$CODEX_RUNNER")" C-m
+tmux send-keys -t "$SESSION_NAME":0.2 "bash $(printf '%q' "$OPENCODE_RUNNER")" C-m
+tmux send-keys -t "$SESSION_NAME":0.3 "bash $(printf '%q' "$AGY_RUNNER")" C-m
 
 cat <<EOF
 Created tmux session: $SESSION_NAME
