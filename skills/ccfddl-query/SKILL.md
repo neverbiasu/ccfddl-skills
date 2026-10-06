@@ -83,6 +83,7 @@ python skills/ccfddl-query/scripts/query_conferences.py list --data-path skills/
 ## Presentation Rules
 
 - For exact conference lookups, show the next concrete deadline, timezone, local time, rank, and URL.
+- Always show each deadline as it appears in the data, with its timezone label (e.g. `2026-08-15 23:59:59 UTC-12`). A converted time may be added next to it, never instead of it. Explain `AoE` (Anywhere on Earth, UTC-12) the first time it appears.
 - For recommendation-style questions, use deterministic filters first: category, rank, status, and deadline window.
 - For "还能投什么 / 现在还能投什么 / 今年还有什么会议能投" style requests, always query live conference status first and present currently open venues before any static shortlist.
 - When the user gives a static shortlist, treat it as a candidate pool to filter against current status; do not present every venue from the shortlist as if it were still open.
