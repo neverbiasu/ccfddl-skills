@@ -1,0 +1,54 @@
+{
+  "skill_name": "ccfddl-query",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "按 ccfddl-query skill 回答：ICML 2026 的截稿时间是什么？现在离线，只能用 fixtures/allconf.sample.yml。",
+      "expectations": [
+        "Runs scripts/query_conferences.py with --data-path fixtures/allconf.sample.yml",
+        "Reports paper deadline 2026-01-29 11:59:59 UTC+0 (abstract 2026-01-24), CCF A, and https://icml.cc/Conferences/2026",
+        "Says the deadline has passed (status closed)",
+        "Says the answer comes from fixture / offline data, not live ccfddl"
+      ],
+      "last_run": {
+        "date": "2026-10-06",
+        "agent": "codex",
+        "result": "pass",
+        "note": "Re-run after the deadline-timezone rule was added to SKILL.md. Ran search --query ICML --data-path fixtures/allconf.sample.yml; abstract 2026-01-24 and paper 2026-01-29 11:59:59 UTC+0, closed, CCF A / CORE A* / THCPL A, official URL; said data is the offline fixture. Skill copy unchanged"
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "按 ccfddl-query skill 回答：假设现在是 2026-07-14（UTC），AI 方向 CCF-A 的会议我还能投什么？现在离线，只能用 fixtures/allconf.sample.yml。",
+      "expectations": [
+        "Queries with --status open and --now 2026-07-14 (plus category AI / CCF rank A filters) against the fixture",
+        "Lists AIFUTURE 2026 as the only open venue, deadline 2026-08-15 23:59:59 UTC-12",
+        "Does not present ICML 2026 as still open",
+        "States the as-of date explicitly and that fixture data was used"
+      ],
+      "last_run": {
+        "date": "2026-10-06",
+        "agent": "codex",
+        "result": "pass",
+        "note": "Earlier run the same day failed: deadline was shown converted to UTC without the original UTC-12. After adding the rule to SKILL.md: ran list --now 2026-07-14T00:00:00Z --category AI --ccf-rank A --status open on the fixture; AIFUTURE 2026 only, deadline 2026-08-15 23:59:59 UTC-12, ICML not listed, as-of date and fixture stated, flagged AIFUTURE as synthetic"
+      }
+    },
+    {
+      "id": 3,
+      "boundary": true,
+      "prompt": "按 ccfddl-query skill 回答：NeurIPS 2027 的截稿时间和录用率是多少？现在离线，只能用 fixtures/allconf.sample.yml 和 fixtures/accept_rates.sample.yml。",
+      "expectations": [
+        "Runs the query and gets 0 results",
+        "Says plainly that the data has no NeurIPS 2027 entry",
+        "Gives no deadline date and no acceptance rate for NeurIPS 2027 (nothing invented from memory)",
+        "No files in the skill directory are modified"
+      ],
+      "last_run": {
+        "date": "2026-10-06",
+        "agent": "codex",
+        "result": "pass",
+        "note": "Re-run after the SKILL.md change. Ran search --query NeurIPS with both fixtures, 0 results; said no NeurIPS entry, deadline and acceptance rate cannot be determined, nothing guessed. Skill copy unchanged"
+      }
+    }
+  ]
+}
