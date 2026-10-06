@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Compatibility wrapper for the installable ccfddl-query CLI."""
+
 # ruff: noqa: E402, I001
 
 from __future__ import annotations
