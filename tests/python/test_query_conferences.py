@@ -582,3 +582,78 @@ def test_live_allconf_smoke_when_enabled(tmp_path):
         assert {"id", "conference", "rank", "deadlines", "status"}.issubset(
             item
         )
+
+
+def _make_stale_cache(tmp_path, days_old=100):
+    cache = tmp_path / "allconf.yml"
+    cache.write_text("- title: OLD\n", encoding="utf-8")
+    old = datetime.now(timezone.utc).timestamp() - days_old * 86400
+    os.utime(cache, (old, old))
+    return cache
+
+
+def test_stale_cache_triggers_refresh(tmp_path, monkeypatch):
+    module = load_module()
+    cache = _make_stale_cache(tmp_path)
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def read(self):
+            return b"- title: NEW\n"
+
+    calls = []
+
+    def fake_urlopen(request, timeout):
+        calls.append(request.full_url)
+        return FakeResponse()
+
+    monkeypatch.setattr(module.urllib.request, "urlopen", fake_urlopen)
+    source = module.load_source(
+        url="https://example.invalid/allconf.yml",
+        data_path=None,
+        cache_path=cache,
+        refresh_cache=False,
+    )
+
+    assert calls == ["https://example.invalid/allconf.yml"]
+    assert source.cache_used is False
+    assert "NEW" in source.text
+    assert "NEW" in cache.read_text(encoding="utf-8")
+
+
+def test_refresh_failure_falls_back_with_dated_warning(
+    tmp_path, monkeypatch, capsys
+):
+    module = load_module()
+    cache = _make_stale_cache(tmp_path)
+    cache_date = datetime.fromtimestamp(
+        cache.stat().st_mtime, timezone.utc
+    ).strftime("%Y-%m-%d")
+
+    def offline(request, timeout):
+        raise module.urllib.error.URLError("offline")
+
+    monkeypatch.setattr(module.urllib.request, "urlopen", offline)
+    source = module.load_source(
+        url="https://example.invalid/allconf.yml",
+        data_path=None,
+        cache_path=cache,
+        refresh_cache=False,
+    )
+
+    assert source.cache_used is True
+    assert "OLD" in source.text
+    assert cache_date in capsys.readouterr().err
+    envelope = module.build_envelope(
+        [], source, now=datetime.now(timezone.utc)
+    )
+    assert any(
+        "cache data was used" in note and cache_date in note
+        for note in envelope["notes"]
+    )
+    assert any("online fetch failed" in note for note in envelope["notes"])

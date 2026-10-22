@@ -16,7 +16,7 @@ Use this skill to answer research conference deadline and filtering questions fr
 5. Lead with conferences that are open as of the current date. Treat closed and TBD venues as secondary context unless the user explicitly asks for a broader landscape.
 6. If there are no open results, say that plainly and then offer the nearest TBD or recently closed venues as fallback context.
 7. Do not answer recommendation-style questions with a static conference cheat sheet alone. Static venue lists are background context only; the final answer must be grounded in current ccfddl query results.
-8. Mention source freshness when cache fallback or fixture data was used.
+8. Mention source freshness when cache or fixture data was used. The script auto-refreshes a cache older than 24h; if the result `notes` say `cache data was used (cache from <date>, ...)` or `online fetch failed`, tell the user the cache date and that deadlines may be outdated (suggest `refresh-cache` once online).
 8. Do not invent missing deadlines, ranks, links, or acceptance rates.
 
 ## Commands

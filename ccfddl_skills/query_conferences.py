@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -26,6 +27,8 @@ except (
 DEFAULT_URL = "https://ccfddl.github.io/conference/allconf.yml"
 DEFAULT_CACHE = Path.home() / ".cache" / "ccfddl-skills" / "allconf.yml"
 DBLP_PREFIX = "https://dblp.org/db/conf/"
+# A cache older than this is refreshed from the network before querying.
+CACHE_MAX_AGE = timedelta(hours=24)
 
 DOMAIN_MAP: Dict[str, Dict[str, Any]] = {
     "cv": {"categories": ["AI", "CG", "MX"], "domain_name": "Computer Vision"},
@@ -50,6 +53,7 @@ class SourceData:
     label: str
     cache_used: bool = False
     notes: Optional[List[str]] = None
+    cache_time: Optional[datetime] = None
 
 
 @dataclass
@@ -81,6 +85,18 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def cache_mtime(cache_path: Path) -> datetime:
+    return datetime.fromtimestamp(cache_path.stat().st_mtime, timezone.utc)
+
+
+def describe_cache_age(cache_time: datetime) -> str:
+    age = utc_now() - cache_time
+    hours = max(age.total_seconds(), 0) / 3600
+    age_text = f"{hours:.1f}h" if hours < 48 else f"{hours / 24:.1f} days"
+    stamp = cache_time.strftime("%Y-%m-%d %H:%M UTC")
+    return f"cache from {stamp}, {age_text} old"
+
+
 def load_source(
     *,
     url: str,
@@ -93,7 +109,9 @@ def load_source(
             data_path.read_text(encoding="utf-8"), f"file:{data_path}"
         )
 
-    if refresh_cache or not cache_path.exists():
+    cache_time = cache_mtime(cache_path) if cache_path.exists() else None
+    stale = cache_time is not None and utc_now() - cache_time > CACHE_MAX_AGE
+    if refresh_cache or cache_time is None or stale:
         try:
             request = urllib.request.Request(
                 url, headers={"User-Agent": "ccfddl-skills/1.0"}
@@ -104,19 +122,28 @@ def load_source(
             cache_path.write_text(text, encoding="utf-8")
             return SourceData(text, url)
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
-            if cache_path.exists():
+            if cache_time is not None:
+                warning = (
+                    f"online fetch failed: {exc}; falling back to "
+                    f"{describe_cache_age(cache_time)}"
+                )
+                print(f"warning: {warning}", file=sys.stderr)
                 return SourceData(
                     cache_path.read_text(encoding="utf-8"),
                     f"cache:{cache_path}",
                     cache_used=True,
-                    notes=[f"online fetch failed: {exc}"],
+                    notes=[warning],
+                    cache_time=cache_time,
                 )
             raise SystemExit(
                 f"Could not fetch {url} and no cache exists: {exc}"
             ) from exc
 
     return SourceData(
-        cache_path.read_text(encoding="utf-8"), f"cache:{cache_path}", True
+        cache_path.read_text(encoding="utf-8"),
+        f"cache:{cache_path}",
+        cache_used=True,
+        cache_time=cache_time,
     )
 
 
@@ -510,7 +537,11 @@ def build_envelope(
 ) -> Dict[str, Any]:
     notes = list(source.notes or [])
     if source.cache_used:
-        notes.append("cache data was used")
+        if source.cache_time is not None:
+            age = describe_cache_age(source.cache_time)
+            notes.append(f"cache data was used ({age})")
+        else:
+            notes.append("cache data was used")
     if extra_notes:
         notes.extend(extra_notes)
     return {

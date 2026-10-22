@@ -13,7 +13,8 @@ The upstream merge script uses `yaml.safe_load`; this skill follows the same app
 Runtime policy:
 
 - Fetch online data by default for freshness.
-- Fall back to a local cache when online fetch fails.
+- Reuse the local cache only while it is younger than `CACHE_MAX_AGE` (24h); an older cache is refreshed from the network first.
+- Fall back to the local cache when online fetch fails, with a stderr warning and a note that include the cache date and age.
 - Use committed fixtures for tests.
 - Do not maintain a hand-edited full conference dataset in this repository.
 

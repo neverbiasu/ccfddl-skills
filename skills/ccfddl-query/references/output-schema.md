@@ -83,6 +83,6 @@ Results with only TBD deadlines produce no VEVENT but still produce a valid (emp
 
 The `notes` array on the envelope contains operational information such as:
 
-- Cache fallback messages (e.g., "cache data was used").
+- Cache messages including the cache date (e.g., "cache data was used (cache from 2026-10-21 08:00 UTC, 3.0h old)").
 - Domain preset mapping info when `--domain` is used, e.g. `domain preset 'cv' (Computer Vision) → categories AI,CG,MX`.
 - Source fetch errors (e.g., "online fetch failed: ...").
