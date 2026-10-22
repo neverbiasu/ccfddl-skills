@@ -1,6 +1,6 @@
 {
   "name": "ccfddl-skills",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Agent Skills for querying ccfddl conference deadline data.",
   "keywords": [
     "agent-skills",

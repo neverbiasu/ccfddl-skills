@@ -10,7 +10,7 @@
       "source": "./",
       "displayName": "CCFDDL Skills",
       "description": "Query conference deadlines, ranks, categories, and submission windows from ccfddl data.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "ccfddl-skills contributors"
       },

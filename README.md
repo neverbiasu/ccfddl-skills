@@ -1,6 +1,6 @@
 # ccfddl-skills
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Data Source](https://img.shields.io/badge/data-ccfddl-informational.svg)](https://ccfddl.github.io/conference/allconf.yml)
 [![Skills](https://img.shields.io/badge/skills-research%20planning-0a7b83.svg)](skills/ccfddl-query/SKILL.md)
