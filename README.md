@@ -22,6 +22,8 @@ Ask your agent things like:
 - "I have an image editing paper. Which venues should I consider?"
 - "Show CV-adjacent conferences even though ccfddl has no native CV category."
 
+![Claude Code answering a venue question with ccfddl-query](demos/screenshot_agent_skill.png)
+
 ## Quickstart
 
 Give your agent `ccfddl-skills`: [Codex](#codex), [Claude Code](#claude-code),
