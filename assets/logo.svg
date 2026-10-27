@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="ccfddl-skills logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e9aa4"/>
+      <stop offset="1" stop-color="#075e64"/>
+    </linearGradient>
+  </defs>
+  <rect width="160" height="160" rx="36" fill="url(#bg)"/>
+  <!-- calendar page -->
+  <rect x="32" y="40" width="96" height="88" rx="12" fill="#ffffff"/>
+  <path d="M32 52a12 12 0 0 1 12-12h72a12 12 0 0 1 12 12v12H32z" fill="#e5484d"/>
+  <rect x="50" y="28" width="10" height="24" rx="5" fill="#f3f4f6"/>
+  <rect x="100" y="28" width="10" height="24" rx="5" fill="#f3f4f6"/>
+  <!-- countdown -->
+  <text x="80" y="111" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700" fill="#0b4f54">DDL</text>
+  <!-- agent prompt mark -->
+  <circle cx="122" cy="122" r="20" fill="#0b1f22"/>
+  <path d="M113 115l8 7-8 7" fill="none" stroke="#5eead4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M124 130h8" stroke="#5eead4" stroke-width="4" stroke-linecap="round"/>
+</svg>

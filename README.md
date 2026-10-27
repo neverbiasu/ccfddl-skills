@@ -1,10 +1,22 @@
+<div align="center">
+
+<img src="assets/logo.svg" alt="ccfddl-skills logo" width="120">
+
 # ccfddl-skills
+
+**Let your coding agent plan conference submissions with live [ccfddl](https://github.com/ccfddl/ccf-deadlines) data.**
 
 [![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![CI](https://github.com/neverbiasu/ccfddl-skills/actions/workflows/check.yml/badge.svg)](https://github.com/neverbiasu/ccfddl-skills/actions/workflows/check.yml)
 [![Data Source](https://img.shields.io/badge/data-ccfddl-informational.svg)](https://ccfddl.github.io/conference/allconf.yml)
-[![Skills](https://img.shields.io/badge/skills-research%20planning-0a7b83.svg)](skills/ccfddl-query/SKILL.md)
 [![Agents](https://img.shields.io/badge/agents-codex%20%7C%20claude%20%7C%20cursor-222222.svg)](adapters/README.md)
+
+[Quickstart](#quickstart) · [How it works](#how-it-works) · [ccfddl](https://ccfddl.com)
+
+<img src="demos/demo.gif" alt="Claude Code answering a venue question with ccfddl-query" width="860">
+
+</div>
 
 `ccfddl-skills` is an agent-skills package for researchers who want coding
 agents to help with conference submission planning.
@@ -21,8 +33,6 @@ Ask your agent things like:
 - "Find open CCF-A AI conferences in the next 180 days."
 - "I have an image editing paper. Which venues should I consider?"
 - "Show CV-adjacent conferences even though ccfddl has no native CV category."
-
-![Claude Code answering a venue question with ccfddl-query](demos/screenshot_agent_skill.png)
 
 ## Quickstart
 
