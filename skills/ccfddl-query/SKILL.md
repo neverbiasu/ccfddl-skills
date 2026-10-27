@@ -17,7 +17,9 @@ Use this skill to answer research conference deadline and filtering questions fr
 6. If there are no open results, say that plainly and then offer the nearest TBD or recently closed venues as fallback context.
 7. Do not answer recommendation-style questions with a static conference cheat sheet alone. Static venue lists are background context only; the final answer must be grounded in current ccfddl query results.
 8. Mention source freshness when cache or fixture data was used. The script auto-refreshes a cache older than 24h; if the result `notes` say `cache data was used (cache from <date>, ...)` or `online fetch failed`, tell the user the cache date and that deadlines may be outdated (suggest `refresh-cache` once online).
-8. Do not invent missing deadlines, ranks, links, or acceptance rates.
+9. Do not invent missing deadlines, ranks, links, or acceptance rates.
+10. Never say a conference is missing from ccfddl based on filtered results. Only claim "ccfddl has no entry for X" after `search --query <name>` with no rank, status, or window filters returns nothing for it. If X exists but a filter excluded it, name the filter, e.g. "IJCAI 2027 is CCF-B in ccfddl, so it is not in the CCF-A results."
+11. Ranks come from ccfddl data, not from memory. If the user or your own recollection gives a different rank, report the ccfddl rank and point out the difference.
 
 ## Commands
 

@@ -657,3 +657,59 @@ def test_refresh_failure_falls_back_with_dated_warning(
         for note in envelope["notes"]
     )
     assert any("online fetch failed" in note for note in envelope["notes"])
+
+
+IJCAI_FIXTURE = """\
+- title: IJCAI
+  description: International Joint Conference on Artificial Intelligence
+  sub: AI
+  rank:
+    ccf: B
+    core: A*
+    thcpl: B
+  dblp: ijcai
+  confs:
+    - year: 2027
+      id: ijcai27
+      link: https://2027.ijcai.org/
+      timeline:
+        - deadline: "2027-01-11 23:59:59"
+      timezone: AoE
+      date: August 7-13, 2027
+      place: Kyoto, Japan
+"""
+
+
+def run_cli_json(*args):
+    proc = subprocess.run(
+        [sys.executable, str(SCRIPT), *args],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return json.loads(proc.stdout)
+
+
+def test_filtered_out_conference_is_still_found_by_unfiltered_search(tmp_path):
+    # Regression: an agent saw IJCAI 2027 absent from CCF-A results and
+    # called it "missing from ccfddl"; it exists as CCF-B.
+    data = tmp_path / "allconf.yml"
+    data.write_text(FIXTURE.read_text(encoding="utf-8") + IJCAI_FIXTURE)
+    common = ["--data-path", str(data), "--now", "2026-10-27T00:00:00+00:00"]
+
+    filtered = run_cli_json(
+        "list",
+        *common,
+        "--ccf-rank",
+        "A",
+        "--status",
+        "open",
+        "--within-days",
+        "180",
+    )
+    assert "ijcai27" not in [item["id"] for item in filtered["results"]]
+
+    found = run_cli_json("search", *common, "--query", "IJCAI")
+    assert [item["id"] for item in found["results"]] == ["ijcai27"]
+    assert found["results"][0]["rank"]["ccf"] == "B"
+    assert found["results"][0]["status"] == "open"
