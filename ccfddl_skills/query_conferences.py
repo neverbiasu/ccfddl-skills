@@ -202,6 +202,14 @@ def timezone_offset(label: str, deadline: Optional[datetime]) -> timezone:
     return timezone.utc
 
 
+def days_left(deadline: Optional[datetime], now: datetime) -> Optional[int]:
+    if deadline is None:
+        return None
+    return int(
+        (deadline.astimezone(timezone.utc) - now).total_seconds() // 86400
+    )
+
+
 def normalize_deadline(
     item: Dict[str, Any],
     tz_label: str,
@@ -217,13 +225,14 @@ def normalize_deadline(
     days_to_deadline = None
     if deadline_dt:
         delta = deadline_dt.astimezone(timezone.utc) - now
-        days_to_deadline = int(delta.total_seconds() // 86400)
+        days_to_deadline = days_left(deadline_dt, now)
         status = "open" if delta.total_seconds() >= 0 else "closed"
 
     abstract_dt = parse_deadline(item.get("abstract_deadline"))
     abstract_with_tz = (
         abstract_dt.replace(tzinfo=offset) if abstract_dt else None
     )
+    abstract_open = abstract_with_tz is not None and abstract_with_tz >= now
 
     return {
         "type": "paper",
@@ -238,6 +247,9 @@ def normalize_deadline(
         "timezone": tz_label,
         "status": status,
         "days_to_deadline": days_to_deadline,
+        "abstract_days_to_deadline": (
+            days_left(abstract_with_tz, now) if abstract_open else None
+        ),
         "comment": item.get("comment"),
     }
 
@@ -504,6 +516,20 @@ def render_markdown(results: List[Dict[str, Any]]) -> str:
             None,
         )
         deadline_text = next_deadline["deadline"] if next_deadline else "TBD"
+        tz_text = item.get("timezone") or ""
+        if next_deadline and next_deadline["days_to_deadline"] is not None:
+            tz_text += f" ({next_deadline['days_to_deadline']}d left)"
+        if next_deadline and next_deadline.get("abstract_deadline"):
+            abstract_days = next_deadline["abstract_days_to_deadline"]
+            deadline_text = (
+                f"abstract {next_deadline['abstract_deadline']}"
+                + (
+                    f" ({abstract_days}d left)"
+                    if abstract_days is not None
+                    else ""
+                )
+                + f"; paper {deadline_text}"
+            )
         rank_text = "/".join(
             value
             for value in (rank.get("ccf"), rank.get("core"), rank.get("thcpl"))
@@ -520,7 +546,7 @@ def render_markdown(results: List[Dict[str, Any]]) -> str:
                 category=item.get("category") or "",
                 status=item.get("status") or "",
                 deadline=deadline_text,
-                tz=item.get("timezone") or "",
+                tz=tz_text,
                 date=item.get("date") or "",
                 place=item.get("place") or "",
             )

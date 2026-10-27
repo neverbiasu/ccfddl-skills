@@ -713,3 +713,58 @@ def test_filtered_out_conference_is_still_found_by_unfiltered_search(tmp_path):
     assert [item["id"] for item in found["results"]] == ["ijcai27"]
     assert found["results"][0]["rank"]["ccf"] == "B"
     assert found["results"][0]["status"] == "open"
+
+
+CVPR_FIXTURE = """\
+- title: CVPR
+  description: IEEE/CVF Computer Vision and Pattern Recognition Conference
+  sub: AI
+  rank:
+    ccf: A
+    core: A*
+    thcpl: A
+  dblp: cvpr
+  confs:
+    - year: 2027
+      id: cvpr27
+      link: https://cvpr.thecvf.com/Conferences/2027
+      timeline:
+        - abstract_deadline: "2026-11-10 23:59:59"
+          deadline: "2026-11-16 23:59:59"
+      timezone: UTC-12
+      date: June 20-25, 2027
+      place: Seattle, WA, United States
+"""
+
+
+def test_abstract_days_to_deadline_is_computed_not_left_to_agent(tmp_path):
+    # Regression: an agent said the CVPR 2027 abstract was due in 14 days;
+    # the abstract deadline is 2026-11-11 11:59 UTC, 15 days 10 hours away.
+    data = tmp_path / "allconf.yml"
+    data.write_text(CVPR_FIXTURE)
+    common = ["--data-path", str(data), "--query", "CVPR"]
+
+    found = run_cli_json("search", *common, "--now", "2026-10-27T01:54:00Z")
+    deadline = found["results"][0]["deadlines"][0]
+    assert deadline["abstract_days_to_deadline"] == 15
+    assert deadline["days_to_deadline"] == 21
+
+    after = run_cli_json("search", *common, "--now", "2026-11-12T00:00:00Z")
+    assert (
+        after["results"][0]["deadlines"][0]["abstract_days_to_deadline"]
+        is None
+    )
+
+
+def test_vendored_impl_matches_package_module():
+    package = ROOT / "ccfddl_skills" / "query_conferences.py"
+    vendored = (
+        ROOT
+        / "skills"
+        / "ccfddl-query"
+        / "scripts"
+        / "query_conferences_impl.py"
+    )
+    assert (
+        vendored.read_bytes() == package.read_bytes()
+    ), "copy ccfddl_skills/query_conferences.py over the vendored impl"

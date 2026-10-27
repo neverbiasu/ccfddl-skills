@@ -66,6 +66,8 @@ Status values:
 - `closed`: all known paper deadlines are in the past.
 - `tbd`: no concrete paper deadline is available.
 
+Each entry in `deadlines` carries `deadline`, `local_deadline`, `abstract_deadline`, `abstract_local_deadline`, `timezone`, `status`, `days_to_deadline` (whole days until the paper deadline) and `abstract_days_to_deadline` (whole days until the abstract deadline; `null` when there is no abstract deadline or it has passed). Day counts round down: 15 days 10 hours is `15`.
+
 Unknown optional fields should be `null` or omitted only when the source cannot provide them. Never invent deadlines, ranks, URLs, or acceptance rates.
 
 ### ICS Format

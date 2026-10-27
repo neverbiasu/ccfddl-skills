@@ -20,6 +20,7 @@ Use this skill to answer research conference deadline and filtering questions fr
 9. Do not invent missing deadlines, ranks, links, or acceptance rates.
 10. Never say a conference is missing from ccfddl based on filtered results. Only claim "ccfddl has no entry for X" after `search --query <name>` with no rank, status, or window filters returns nothing for it. If X exists but a filter excluded it, name the filter, e.g. "IJCAI 2027 is CCF-B in ccfddl, so it is not in the CCF-A results."
 11. Ranks come from ccfddl data, not from memory. If the user or your own recollection gives a different rank, report the ccfddl rank and point out the difference.
+12. Copy dates, timezone conversions, and remaining days from the script output; never compute them yourself. Use `days_to_deadline` for the paper deadline and `abstract_days_to_deadline` for the abstract deadline. If the script gives no number for something (for example `abstract_days_to_deadline` is null), do not state one; say it is not available or that it needs another query.
 
 ## Commands
 
