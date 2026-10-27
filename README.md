@@ -6,7 +6,7 @@
 
 **Let your coding agent plan conference submissions with live [ccfddl](https://github.com/ccfddl/ccf-deadlines) data.**
 
-[![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![CI](https://github.com/neverbiasu/ccfddl-skills/actions/workflows/check.yml/badge.svg)](https://github.com/neverbiasu/ccfddl-skills/actions/workflows/check.yml)
 [![Data Source](https://img.shields.io/badge/data-ccfddl-informational.svg)](https://ccfddl.github.io/conference/allconf.yml)
