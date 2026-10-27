@@ -768,3 +768,51 @@ def test_vendored_impl_matches_package_module():
     assert (
         vendored.read_bytes() == package.read_bytes()
     ), "copy ccfddl_skills/query_conferences.py over the vendored impl"
+
+
+ACL_FIXTURE = """\
+- title: ACL
+  description: Annual Meeting of the Association for Computational Linguistics
+  sub: AI
+  rank:
+    ccf: A
+    core: A*
+    thcpl: A
+  dblp: acl
+  confs:
+    - year: 2027
+      id: acl27
+      link: https://2027.aclweb.org/
+      timeline:
+        - deadline: "2027-01-04 23:59:59"
+      timezone: UTC-12
+      date: August 17-22, 2027
+      place: Kyoto, Japan
+"""
+
+
+def test_vision_presets_exclude_nlp_venues_and_say_so(tmp_path):
+    # Regression: an image-editing query recommended ACL 2027 because
+    # ccfddl files NLP venues under AI.
+    data = tmp_path / "allconf.yml"
+    data.write_text(CVPR_FIXTURE + ACL_FIXTURE)
+    common = [
+        "--data-path",
+        str(data),
+        "--ccf-rank",
+        "A",
+        "--status",
+        "open",
+        "--now",
+        "2026-10-27T01:54:00Z",
+    ]
+
+    vision = run_cli_json("list", *common, "--domain", "image-editing")
+    assert [r["id"] for r in vision["results"]] == ["cvpr27"]
+    assert any(
+        "excluded NLP venues" in note and "ACL 2027" in note
+        for note in vision["notes"]
+    )
+
+    plain = run_cli_json("list", *common, "--category", "AI")
+    assert sorted(r["id"] for r in plain["results"]) == ["acl27", "cvpr27"]

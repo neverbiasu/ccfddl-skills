@@ -8,7 +8,7 @@ import json
 import sys
 import urllib.error
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, timedelta, timezone
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -30,19 +30,42 @@ DBLP_PREFIX = "https://dblp.org/db/conf/"
 # A cache older than this is refreshed from the network before querying.
 CACHE_MAX_AGE = timedelta(hours=24)
 
+# ccfddl files NLP venues under AI, so vision presets drop them explicitly.
+# ponytail: hand-kept list; extend it when ccfddl adds an NLP venue to AI.
+NLP_VENUES = frozenset(
+    {
+        "ACL",
+        "COLING",
+        "COLM",
+        "CONLL",
+        "EACL",
+        "EMNLP",
+        "IJCNLP",
+        "NAACL",
+        "NLPCC",
+    }
+)
+
 DOMAIN_MAP: Dict[str, Dict[str, Any]] = {
-    "cv": {"categories": ["AI", "CG", "MX"], "domain_name": "Computer Vision"},
+    "cv": {
+        "categories": ["AI", "CG", "MX"],
+        "domain_name": "Computer Vision",
+        "exclude": NLP_VENUES,
+    },
     "computer-vision": {
         "categories": ["AI", "CG", "MX"],
         "domain_name": "Computer Vision",
+        "exclude": NLP_VENUES,
     },
     "image-editing": {
         "categories": ["AI", "CG", "MX"],
         "domain_name": "Image Editing",
+        "exclude": NLP_VENUES,
     },
     "relighting": {
         "categories": ["AI", "CG", "MX"],
         "domain_name": "Relighting",
+        "exclude": NLP_VENUES,
     },
 }
 
@@ -654,6 +677,23 @@ def run_query(args: argparse.Namespace) -> int:
         within_days=getattr(args, "within_days", None),
         limit=args.limit,
     )
+    excluded_venues = DOMAIN_MAP[domain.lower()]["exclude"] if domain else ()
+    if excluded_venues:
+        dropped = apply_filters(
+            [r for r in results if r["conference"].upper() in excluded_venues],
+            replace(filters, limit=None),
+        )
+        results = [
+            r
+            for r in results
+            if r["conference"].upper() not in excluded_venues
+        ]
+        if dropped:
+            names = ", ".join(r.get("title") or r["id"] for r in dropped)
+            extra_notes.append(
+                f"domain preset '{domain}' excluded NLP venues that "
+                f"otherwise matched: {names}"
+            )
     results = apply_filters(results, filters)
     if args.format == "ics":
         print(render_ics(results), end="")

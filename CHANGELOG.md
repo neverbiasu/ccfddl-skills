@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. This project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- Vision presets (`cv`, `computer-vision`, `image-editing`, `relighting`) no longer return NLP venues such as ACL, EMNLP and NAACL, which ccfddl files under AI. Excluded venues that would otherwise have matched are listed in the notes, and the skill tells agents to check a venue's own topic before recommending it.
+
+### Changed
+- New logo combining the Agent Skills hexagon with the ccfddl DDL mark, and an animated demo in the README.
+
 ## [1.0.2] - 2026-10-27
 
 ### Fixed
