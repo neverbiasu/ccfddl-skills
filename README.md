@@ -251,3 +251,7 @@ scripts/check.sh
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
+
+The logo combines the [Agent Skills](https://github.com/agentskills) hexagon
+with the DDL mark from [ccf-deadlines](https://github.com/ccfddl/ccf-deadlines)
+(MIT). Conference data comes from ccfddl.

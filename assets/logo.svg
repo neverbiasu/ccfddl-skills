@@ -1,20 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="ccfddl-skills logo">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0e9aa4"/>
-      <stop offset="1" stop-color="#075e64"/>
-    </linearGradient>
-  </defs>
-  <rect width="160" height="160" rx="36" fill="url(#bg)"/>
-  <!-- calendar page -->
-  <rect x="32" y="40" width="96" height="88" rx="12" fill="#ffffff"/>
-  <path d="M32 52a12 12 0 0 1 12-12h72a12 12 0 0 1 12 12v12H32z" fill="#e5484d"/>
-  <rect x="50" y="28" width="10" height="24" rx="5" fill="#f3f4f6"/>
-  <rect x="100" y="28" width="10" height="24" rx="5" fill="#f3f4f6"/>
-  <!-- countdown -->
-  <text x="80" y="111" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700" fill="#0b4f54">DDL</text>
-  <!-- agent prompt mark -->
-  <circle cx="122" cy="122" r="20" fill="#0b1f22"/>
-  <path d="M113 115l8 7-8 7" fill="none" stroke="#5eead4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M124 130h8" stroke="#5eead4" stroke-width="4" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="512" height="512" role="img" aria-label="ccfddl-skills logo">
+  <path d="M20 2.2L35.4 11.1V28.9L20 37.8L4.6 28.9V11.1Z" fill="#111111" stroke="#111111" stroke-width="2" stroke-linejoin="round"/>
+  <g transform="translate(20 20.3) scale(0.62) translate(-16.4 -16)">
+    <path fill="#CF3D08" d="M3.2 13.16C5.55 13.75 7 16 7 18.4V24.2Q7 25 7.8 25H11.8Q13 25 13 26.2V28.8Q13 30 11.8 30H3.2Q2 30 2 28.8V14.2Q2 12.9 3.2 13.16Z"/>
+    <path fill="#F66A0A" fill-rule="evenodd" d="M10.4 9.3H17A6.2 6.7 0 0 1 17 22.7H10.4Q9.3 22.7 9.3 21.6V10.4Q9.3 9.3 10.4 9.3ZM13.2 12.5H17A3 3.5 0 0 1 17 19.5H13.2Q12.5 19.5 12.5 18.8V13.2Q12.5 12.5 13.2 12.5Z"/>
+    <path fill="#CF3D08" d="M3.2 2H17A13.5 14 0 0 1 18.2 29.944Q17 30 17 28.8V26.2Q17 25 18.2 24.91A8.5 9 0 0 0 17 7H7C4.58 7 2.603 5.385 2.07 3.2Q1.94 2 3.2 2Z"/>
+  </g>
 </svg>
